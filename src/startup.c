@@ -36,6 +36,8 @@ void Reset_Handler(void){
         "end_loop:\n\t"
     );
 
+    System_Init();
+    
     main();
 }
 

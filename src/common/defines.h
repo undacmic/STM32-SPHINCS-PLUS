@@ -184,10 +184,26 @@ void CEC_IRQHandler()                               __attribute__((weak, alias (
 
 #define GPIOA_BASE                  0x50000000
 #define GPIOA                       ((GPIO_Def*) GPIOA_BASE)
+#define GPIOB_BASE                  0x50000400
+#define GPIOB                       ((GPIO_Def*) GPIOB_BASE)
+#define GPIOC_BASE                  0x50000800
+#define GPIOC                       ((GPIO_Def*) GPIOC_BASE)
+#define GPIOD_BASE                  0x50000C00
+#define GPIOD                       ((GPIO_Def*) GPIOD_BASE)
+#define GPIOE_BASE                  0x50001000
+#define GPIOE                       ((GPIO_Def*) GPIOE_BASE)
+#define GPIOF_BASE                  0x50001400
+#define GPIOF                       ((GPIO_Def*) GPIOF_BASE)
 #define GPIO_MODER_MODE_MASK(y)     (0x3UL  << 2*y)
 #define GPIO_MODER_MODE(x, y)       ((x & 0x3UL)  << 2*y)
-#define GPIO_AFRL_AFSEL_MASK(y)     (0xFUL  << 4*y)
-#define GPIO_AFRL_AFSEL(x, y)       ((x & 0xFUL)  << 4*y)
+#define GPIO_AFRx_AFSEL_MASK(y)     (0xFUL  << 4*y)
+#define GPIO_AFRx_AFSEL(x, y)       ((x & 0xFUL)  << 4*y)
+#define GPIO_OTYPER_OT_MASK(y)      (0x1UL  << y)
+#define GPIO_OSPEEDR_OSPEED_MASK(y) (0x3UL  << 2*y)
+#define GPIO_OSPEEDR_OSPEED(x, y)   ((x & 0x3UL)  << 2*y)
+#define GPIO_PUPDR_PUPD_MASK(y)     (0x3UL  << 2*y)
+#define GPIO_PUPDR_PUPD(x, y)       ((x & 0x3UL)  << 2*y)
+
 
 #define FLASH_BASE                  0x40022000
 #define FLASH                       ((FLASH_Def*) FLASH_BASE)
