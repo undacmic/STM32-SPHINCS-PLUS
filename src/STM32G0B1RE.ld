@@ -5,7 +5,6 @@ MEMORY {
     SRAM  (xrw)     : ORIGIN = 0x20000000, LENGTH = 144K
 }
 
-
 SECTIONS {
     .isr_vector : {
         KEEP(*(.isr_vector))

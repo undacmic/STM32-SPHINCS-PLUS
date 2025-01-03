@@ -1,7 +1,7 @@
 # Toolchain
 CC = arm-none-eabi-gcc
 SIZE = arm-none-eabi-size
-OBJCOPY = arm-non-eabi-objcopy
+OBJCOPY = arm-none-eabi-objcopy
 STFLASH = st-flash
 CPPCHECK = cppcheck
 
@@ -10,10 +10,11 @@ BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
 BIN_DIR = $(BUILD_DIR)/bin
 INCLUDE_DIRS = ./src \
-			   ./external/
+			   ./external/ \
+			   ./	
 
 # Files
-TARGET_NAME = program.bin
+TARGET_NAME = program.elf
 TARGET = $(BIN_DIR)/$(TARGET_NAME)
 
 MAIN_FILE = src/main.c
@@ -51,7 +52,7 @@ DEFINES = -DPRINTF_INCLUDE_CONFIG_H \
 
 # Flags
 WFLAGS = -Wall -Wextra -Werror -Wshadow
-CFLAGS = -mcpu=cortex-m0 -mthumb -nostdlib -Og -g
+CFLAGS = -mcpu=cortex-m0 -mthumb -nostdlib -Og -g $(INCLUDES) $(DEFINES)
 LDFLAGS = -Xlinker -Map=$(BUILD_DIR)/bin/program.map -nostartfiles -T $(LINKER_SCRIPT) $(INCLUDES)
 
 
@@ -79,9 +80,8 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 flash: $(TARGET)
-	@$(STFLASH) erase
-	@$(STFLASH) --reset write $< 0x80000000
-
+	@openocd -f interface/stlink.cfg -f target/stm32g0x.cfg -c "program $(TARGET) verify reset exit"
+ 
 check:
 	$(CPPCHECK) $(CPPCHECK_FLAGS) $(SOURCES_FORMAT_CHECK) 
 

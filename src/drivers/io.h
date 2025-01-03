@@ -3,13 +3,11 @@
 
 #include <stdint.h>
 
-
 /**
- * 
  * I/O wrapper over the crude registers provided inside the STM32G0x1 Reference Manual
  * handling pinmapping and configuration.
- * 
  */
+
 typedef enum {
     IO_A0, IO_A1, IO_A2, IO_A3, IO_A4, IO_A5, IO_A6, IO_A7, IO_A8, IO_A9, IO_A10, IO_A11, IO_A12, IO_A13, IO_A14, IO_A15,
     IO_B0, IO_B1, IO_B2, IO_B3, IO_B4, IO_B5, IO_B6, IO_B7, IO_B8, IO_B9, IO_B10, IO_B11, IO_B12, IO_B13, IO_B14, IO_B15,
@@ -17,6 +15,12 @@ typedef enum {
     IO_D0, IO_D1, IO_D2, IO_D3, IO_D4, IO_D5, IO_D6, IO_D7, IO_D8, IO_D9, IO_D10, IO_D11, IO_D12, IO_D13, IO_D14, IO_D15,
     IO_E0, IO_E1, IO_E2, IO_E3, IO_E4, IO_E5, IO_E6, IO_E7, IO_E8, IO_E9, IO_E10, IO_E11, IO_E12, IO_E13, IO_E14, IO_E15,
     IO_F0, IO_F1, IO_F2, IO_F3, IO_F4, IO_F5, IO_F6, IO_F7, IO_F8, IO_F9, IO_F10, IO_F11, IO_F12, IO_F13, IO_F14, IO_F15
+} io_generic_e;
+
+typedef enum {
+    IO_USART2_TX = IO_A2,
+    IO_USART2_RX = IO_A3,
+    IO_USER_LED = IO_A5 
 } io_e;
 
 typedef enum {
@@ -70,6 +74,7 @@ typedef struct {
     io_val_e out;
 } io_config;
 
+void io_init(void);
 void io_configure(io_e io, io_config config);
 void io_configure_mode(uint8_t port, uint8_t pin, io_mode_e mode);
 void io_configure_function(uint8_t port, uint8_t pin, io_func_e function);

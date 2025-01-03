@@ -2,6 +2,20 @@
 
 /*================== Peripheral Devices =========================================*/
 
+// Nested Vectored Interrupt Controller
+typedef struct {
+    volatile uint32_t ISER;     /* Offset 0x000 Interrupt set-enable register    */
+    uint32_t RESERVED0[31U];    
+    volatile uint32_t ICER;     /* Offset 0x080 Interrupt clear-enable register  */
+    uint32_t RESERVED1[31U];
+    volatile uint32_t ISPR;     /* Offset 0x100 Interrupt set-pending register   */
+    uint32_t RESERVED2[31U];
+    volatile uint32_t ICPR;     /* Offset 0x180 Interrupt clear-pending register */
+    uint32_t RESERVED3[31U];
+    uint32_t RESERVED4[64u];
+    volatile uint32_t IPR[8U];  /* Offset 0x300 Interrupt priority registers     */
+} NIVC_Def;
+
 // Reset and Clock Control
 typedef struct {
     volatile uint32_t CR;
@@ -88,6 +102,17 @@ typedef struct {
     volatile uint32_t SECR;
 } FLASH_Def; 
 
+/*================== Clock ===============================================================*/
+
+#define CYCLES_1MHZ                                 (1000000U)
+#define CYCLES_64MHZ                                (64U * CYCLES_1MHZ)
+#define SYSCLK                                      (CYCLES_64MHZ)
+
+/*================== ARM Cortex-M0+ PRIMASK ==============================================*/
+
+static inline void __enable_interrupts(void)        __attribute__((always_inline));
+static inline void __disable_interrupts(void)       __attribute__((always_inline));
+
 /*================== Interrupt Vector Prototypes =========================================*/
 
 void Default_Handler(void)                          __attribute__((weak));
@@ -138,7 +163,10 @@ void CEC_IRQHandler()                               __attribute__((weak, alias (
 
 /*================== Macros ==============================================================*/
 
-#define RCC_BASE                    0x40021000
+#define PPB_BASE                    (0xE0000000)
+#define NVIC_NASE                   (PPB_BASE + 0xE100)
+
+#define RCC_BASE                    (0x40021000)
 #define RCC                         ((RCC_Def*) RCC_BASE)
 #define RCC_CR_PLLON_MASK           (0x1UL  << 24)
 #define RCC_CR_PLLRDY_MASK          (0x1UL  << 25)
@@ -165,7 +193,7 @@ void CEC_IRQHandler()                               __attribute__((weak, alias (
 #define RCC_APBENR1_USART2EN        (0X1UL  << 17)
 #define RCC_IOPENR_GPIOAEN_MASK     (0x1UL  << 0)
 
-#define USART2_BASE                 0x40004400
+#define USART2_BASE                 (0x40004400)
 #define USART2                      ((USART_Def*) USART2_BASE)
 #define USART2_CR1_UE_MASK          (0x1UL  << 0)
 #define USART2_CR1_RE_MASK          (0x1UL  << 2)
@@ -180,19 +208,19 @@ void CEC_IRQHandler()                               __attribute__((weak, alias (
 #define USART2_PRESC_PRESCALER(x)   ((x & 0xFUL)  << 0)
 #define USART2_BRR_BRR_MASK         (0x7FFFUL << 0)
 #define USART2_BRR_BRR(x)           ((x & 0x7FFFUL) << 0)
-#define USART2_ISR_TXE_MASK         (0x1UL  << 7)
+#define USART2_ISR_TC_MASK          (0x1UL  << 6)
 
-#define GPIOA_BASE                  0x50000000
+#define GPIOA_BASE                  (0x50000000)
 #define GPIOA                       ((GPIO_Def*) GPIOA_BASE)
-#define GPIOB_BASE                  0x50000400
+#define GPIOB_BASE                  (0x50000400)
 #define GPIOB                       ((GPIO_Def*) GPIOB_BASE)
-#define GPIOC_BASE                  0x50000800
+#define GPIOC_BASE                  (0x50000800)
 #define GPIOC                       ((GPIO_Def*) GPIOC_BASE)
-#define GPIOD_BASE                  0x50000C00
+#define GPIOD_BASE                  (0x50000C00)
 #define GPIOD                       ((GPIO_Def*) GPIOD_BASE)
-#define GPIOE_BASE                  0x50001000
+#define GPIOE_BASE                  (0x50001000)
 #define GPIOE                       ((GPIO_Def*) GPIOE_BASE)
-#define GPIOF_BASE                  0x50001400
+#define GPIOF_BASE                  (0x50001400)
 #define GPIOF                       ((GPIO_Def*) GPIOF_BASE)
 #define GPIO_MODER_MODE_MASK(y)     (0x3UL  << 2*y)
 #define GPIO_MODER_MODE(x, y)       ((x & 0x3UL)  << 2*y)
@@ -205,12 +233,14 @@ void CEC_IRQHandler()                               __attribute__((weak, alias (
 #define GPIO_PUPDR_PUPD(x, y)       ((x & 0x3UL)  << 2*y)
 
 
-#define FLASH_BASE                  0x40022000
+#define FLASH_BASE                  (0x40022000)
 #define FLASH                       ((FLASH_Def*) FLASH_BASE)
 #define FLASH_ACR_LATENCY_MASK      (0x7UL  << 0)
 #define FLASH_ACR_LATENCY(x)        ((x & 0x7UL)  << 0)
 #define FLASH_ACR_PRFTEN_MASK       (0x1UL  << 8)
 
+/*================== Utils =================================================================*/
+#define ARRAY_SIZE(array)           (sizeof(array) / sizeof(array[0]))
 
 /*================== Function Definitions ==================================================*/
 
@@ -220,3 +250,19 @@ void Default_Handler(void) {
 
     }
 }
+
+/*
+* Enables IRQ interrupts by clearing special-purpose register PRIMASK
+*/
+static inline void __enable_interrupts(void) {
+    __asm ("cpsie i" : : : "memory");
+}
+
+/*
+* Disables IRQ interrupts by setting special-purpose register PRIMASK
+*/
+static inline void __disable_interrupts(void) {
+    __asm ("cpsid i" : : : "memory");
+}
+
+
