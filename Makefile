@@ -55,11 +55,6 @@ WFLAGS = -Wall -Wextra -Werror -Wshadow
 CFLAGS = -mcpu=cortex-m0 -mthumb -nostdlib -Og -g $(INCLUDES) $(DEFINES)
 LDFLAGS = -Xlinker -Map=$(BUILD_DIR)/bin/program.map -nostartfiles -T $(LINKER_SCRIPT) $(INCLUDES)
 
-
-# Binary
-$(BIN_DIR)/%.bin: $(BIN_DIR)/%.elf
-	$(OBJCOPY) -O binary $< $@
-
 # Linking
 $(BIN_DIR)/%.elf: $(OBJECTS)
 	@mkdir -p $(dir $@)

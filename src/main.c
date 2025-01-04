@@ -5,10 +5,13 @@
 
 int main () {
     io_init();
+
+    __enable_interrupts();
+
     USART_Init();
 
     while (1) {
-        _putchar('O');
+        printf("OK\n");
     }
 
     return 0;
