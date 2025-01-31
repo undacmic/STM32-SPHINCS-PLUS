@@ -18,6 +18,14 @@ SECTIONS {
         _etext = .;
     } >FLASH
 
+    .init_array : {
+        . = ALIGN(4);
+        __init_array_start = .;
+        KEEP(*(.init_array*))
+        __init_array_end = .;
+        . = ALIGN(4);
+    } >FLASH
+
     _sidata = LOADADDR(.data);
 
     .data : {
@@ -36,6 +44,12 @@ SECTIONS {
         *(.bss*)
         . = ALIGN(4);
         _bss_end = .;
+    } >SRAM
+
+     ._user_heap_stack : {
+        . = ALIGN(4);
+        PROVIDE (_heap_start = .);
+        _end = . ;
     } >SRAM
 
     _estack = ORIGIN(SRAM) + LENGTH(SRAM);

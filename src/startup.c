@@ -1,6 +1,7 @@
 #include "common/defines.h"
 
 extern int main();
+extern void __libc_init_array(void);
 
 extern uint32_t _estack;
 extern uint32_t _sidata;
@@ -8,6 +9,7 @@ extern uint32_t _data_start;
 extern uint32_t _data_end;
 extern uint32_t _bss_start;
 extern uint32_t _bss_end;
+extern uint32_t _heap_start;
 
 /*================== Interrupt Vector Prototypes =========================================*/
 
@@ -59,6 +61,25 @@ void CEC_IRQHandler()                               __attribute__((weak, alias (
 
 /*================== Function Definitions ==================================================*/
 
+// Normally provided by Newlib's runtime file crti.o, but we compile without
+// (-startfiles) Inserted by __libc_init_array because newlib was compiled with
+// _HAVE_INIT_FINI. We don't need it, so add an empty stub.
+void _init(void) {} 
+
+void *_sbrk(int incr) {
+    static unsigned char *heap = 0;
+    unsigned char *prev_heap;
+
+    if (heap == 0) {
+        heap = (unsigned char *)&_heap_start;
+    }
+
+    prev_heap = heap;
+    heap += incr;
+
+    return prev_heap;
+}
+
 void Reset_Handler(void){
     __asm (
         "LDR R0, =_estack\n\t"
@@ -84,6 +105,8 @@ void Reset_Handler(void){
         "end_loop:\n\t"
     );
 
+    __libc_init_array();
+
     System_Init();
     
     main();
@@ -97,14 +120,17 @@ void Default_Handler(void) {
 }
 
 void System_Init(void) {
-
+    // FLASH->ACR &= ~FLASH_ACR_LATENCY_MASK;
     FLASH->ACR |= FLASH_ACR_LATENCY(2);
     FLASH->ACR |= FLASH_ACR_PRFTEN_MASK;
     while ((FLASH->ACR & FLASH_ACR_LATENCY_MASK) != 2) {
     }
 
-    RCC->CR &= ~RCC_CR_PLLON_MASK;
+    RCC->CR |= RCC_CR_HSI48ON_MASK;
+    while (RCC->CR & RCC_CR_HSI48RDY_MASK) {
+    }
 
+    RCC->CR &= ~RCC_CR_PLLON_MASK;
     while (RCC->CR & RCC_CR_PLLRDY_MASK) {
     }
 
@@ -112,22 +138,42 @@ void System_Init(void) {
     RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC(2);
 
     RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLM_MASK;
-    RCC->PLLCFGR |= RCC_PLLCFGR_PLLM(1);
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLM(4);
 
     RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLN_MASK;
-    RCC->PLLCFGR |= RCC_PLLCFGR_PLLN(16);
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLN(83);
+
+    RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLQ_MASK;
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLQ(2);
+
+    RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLP_MASK;
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLP(30);
 
     RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLR_MASK;
-    RCC->PLLCFGR |= RCC_PLLCFGR_PLLR(1);
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLR(4);
 
     RCC->CR |= RCC_CR_PLLON_MASK;
 
     RCC->PLLCFGR |= RCC_PLLCFGR_PLLREN_MASK;
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLQEN_MASK;
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLPEN_MASK;
 
     while (! (RCC->CR & RCC_CR_PLLRDY_MASK)) {
     }
 
     RCC->CFGR |= RCC_CFGR_SW(2);
+
+    RCC->CFGR &= ~RCC_CFGR_MCOPRE_MASK;
+    RCC->CFGR &= ~RCC_CFGR_MCOSEL_MASK;
+    RCC->CFGR |= RCC_CFGR_MCOPRE(4);
+    RCC->CFGR |= RCC_CFGR_MCOSEL(2);
+
+    RCC->CFGR &= ~RCC_CFGR_MCO2PRE_MASK;
+    RCC->CFGR &= ~RCC_CFGR_MCO2SEL_MASK;
+    RCC->CFGR |= RCC_CFGR_MCO2PRE(4);
+    RCC->CFGR |= RCC_CFGR_MCO2SEL(8);
+
+    
 }
 
 void NMI_Handler(void) {

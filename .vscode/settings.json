@@ -1,0 +1,19 @@
+{
+    "files.associations": {
+        "chrono": "cpp",
+        "typeinfo": "cpp",
+        "array": "cpp",
+        "bitset": "cpp",
+        "string_view": "cpp",
+        "format": "cpp",
+        "initializer_list": "cpp",
+        "span": "cpp",
+        "regex": "cpp",
+        "stdint.h": "c",
+        "defines.h": "c",
+        "simplefips202.h": "c",
+        "string.h": "c",
+        "crypto.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": false
+}

@@ -100,12 +100,121 @@ typedef struct {
     volatile uint32_t PCROP2BSR;
     volatile uint32_t RESERVED2;
     volatile uint32_t SECR;
-} FLASH_Def; 
+} FLASH_Def;
+
+// Timer
+typedef struct {
+    volatile uint16_t CR1;
+    volatile uint16_t RESERVED0;
+    volatile uint16_t CR2;
+    volatile uint16_t RESERVED1;
+    volatile uint32_t RESERVED2;
+    volatile uint16_t DIER;
+    volatile uint16_t RESERVED3;
+    volatile uint16_t SR;
+    volatile uint16_t RESERVED4;
+    volatile uint16_t EGR;
+    volatile uint16_t RESERVED5;
+    volatile uint32_t CCMR1;
+    volatile uint32_t RESERVED6;
+    volatile uint16_t CCER;
+    volatile uint16_t RESERVED7;
+    volatile uint32_t CNT;
+    volatile uint16_t PSC;
+    volatile uint16_t RESERVED8;
+    volatile uint16_t ARR;
+    volatile uint16_t RESERVED9;
+    volatile uint16_t RCR;
+    volatile uint16_t RESERVED10;
+    volatile uint16_t CCR1;
+    volatile uint16_t RESERVED11;
+    volatile uint16_t CCR2;
+    volatile uint16_t RESERVED12;
+    volatile uint32_t RESERVED13[2];
+    volatile uint32_t BDTR;
+    volatile uint16_t DCR;
+    volatile uint16_t RESERVED14;
+    volatile uint16_t DMAR;
+    volatile uint16_t RESERVED15;
+    volatile uint32_t RESERVED16[4];
+    volatile uint32_t AF1;
+    volatile uint32_t RESERVED17;
+    volatile uint32_t TISEL;
+} TIM_Def;
+
+// Direct Memory Access
+typedef struct  {
+    volatile uint32_t ISR;
+    volatile uint32_t IFCR;
+    volatile uint32_t CCR1;
+    volatile uint32_t CNDTR1;
+    volatile uint32_t CPAR1;
+    volatile uint32_t CMAR1;
+    volatile uint32_t RESERVED0;
+    volatile uint32_t CCR2;
+    volatile uint32_t CNDTR2;
+    volatile uint32_t CPAR2;
+    volatile uint32_t CMAR2;
+    volatile uint32_t RESERVED1;
+    volatile uint32_t CCR3;
+    volatile uint32_t CNDTR3;
+    volatile uint32_t CPAR3;
+    volatile uint32_t CMAR3;
+    volatile uint32_t RESERVED2;
+    volatile uint32_t CCR4;
+    volatile uint32_t CNDTR4;
+    volatile uint32_t CPAR4;
+    volatile uint32_t CMAR4;
+    volatile uint32_t RESERVED3;
+    volatile uint32_t CCR5;
+    volatile uint32_t CNDTR5;
+    volatile uint32_t CPAR5;
+    volatile uint32_t CMAR5;
+    volatile uint32_t RESERVED4;
+    volatile uint32_t CCR6;
+    volatile uint32_t CNDTR6;
+    volatile uint32_t CPAR6;
+    volatile uint32_t CMAR6;
+    volatile uint32_t RESERVED5;
+    volatile uint32_t CCR7;
+    volatile uint32_t CNDTR7;
+    volatile uint32_t CPAR7;
+    volatile uint32_t CMAR7;
+} DMA1_Def;
+
+// Direct Memory Access Multiplexer
+typedef struct {
+    volatile uint32_t C0CR;
+    volatile uint32_t C1CR;
+    volatile uint32_t C2CR;
+    volatile uint32_t C3CR;
+    volatile uint32_t C4CR;
+    volatile uint32_t C5CR;
+    volatile uint32_t C6CR;
+    volatile uint32_t C7CR;
+    volatile uint32_t C8CR;
+    volatile uint32_t C9CR;
+    volatile uint32_t C10CR;
+    volatile uint32_t C11CR;
+    volatile uint32_t RESERVED0[20];
+    volatile uint32_t CSR;
+    volatile uint32_t CFR;
+    volatile uint32_t RESERVED1[30];
+    volatile uint32_t RG0CR;
+    volatile uint32_t RG1CR;
+    volatile uint32_t RG2CR;
+    volatile uint32_t RG3CR;
+    volatile uint32_t RESERVED2[12];
+    volatile uint32_t RGSR;
+    volatile uint32_t RGCFR;
+} DMAMUX_Def;
+
 
 /*================== Clock ===============================================================*/
 
 #define CYCLES_1MHZ                                 (1000000U)
 #define CYCLES_64MHZ                                (64U * CYCLES_1MHZ)
+#define CYCLES_16MHZ                                (16U * CYCLES_1MHZ)
 #define SYSCLK                                      (CYCLES_64MHZ)
 
 /*================== ARM Cortex-M0+ PRIMASK ==============================================*/
@@ -124,11 +233,21 @@ static inline void __disable_interrupts(void)       __attribute__((always_inline
 #define RCC                         ((RCC_Def*) RCC_BASE)
 #define RCC_CR_PLLON_MASK           (0x1UL  << 24)
 #define RCC_CR_PLLRDY_MASK          (0x1UL  << 25)
+#define RCC_CR_HSI48ON_MASK         (0x1UL  << 22)
+#define RCC_CR_HSI48RDY_MASK        (0x1UL  << 23)
 #define RCC_CFGR_SW_MASK            (0x3UL  << 0)
 #define RCC_CFGR_SW(x)              ((x & 0x3UL) << 0)
 #define RCC_CFGR_SWS_PLL_MASK       (0x1UL  << 4)
 #define RCC_CFGR_PPRE_MASK          (0x7UL  << 12)
 #define RCC_CFGR_PPRE(x)            ((x & 0x7UL) << 12)
+#define RCC_CFGR_MCOSEL_MASK        (0xFUL  << 24)
+#define RCC_CFGR_MCOSEL(x)          ((x & 0xFUL) << 24)
+#define RCC_CFGR_MCO2SEL_MASK       (0xFUL  << 16)
+#define RCC_CFGR_MCO2SEL(x)         ((x & 0xFUL) << 16)
+#define RCC_CFGR_MCOPRE_MASK        (0xFUL  << 28)
+#define RCC_CFGR_MCOPRE(x)          ((x & 0xFUL) << 28)
+#define RCC_CFGR_MCO2PRE_MASK       (0xFUL  << 20)
+#define RCC_CFGR_MCO2PRE(x)         ((x & 0xFUL) << 20)
 #define RCC_PLLCFGR_PLLSRC_MASK     (0x3UL  << 0)
 #define RCC_PLLCFGR_PLLSRC(x)       ((x & 0x3UL) << 0)
 #define RCC_PLLCFGR_PLLM_MASK       (0x7UL  << 4)
@@ -143,9 +262,15 @@ static inline void __disable_interrupts(void)       __attribute__((always_inline
 #define RCC_PLLCFGR_PLLQ(x)         ((x & 0x7UL) << 25)
 #define RCC_PLLCFGR_PLLREN_MASK     (0x1UL  << 28)
 #define RCC_PLLCFGR_PLLR_MASK       (0x7UL  << 29)
-#define RCC_PLLCFGR_PLLR(x)         ((x & 0x7UL) << 29)    
-#define RCC_APBENR1_USART2EN        (0X1UL  << 17)
+#define RCC_PLLCFGR_PLLR(x)         ((x & 0x7UL) << 29) 
+#define RCC_AHBENR_DMA1EN           (0x1UL  << 0)   
+#define RCC_APBENR1_USART2EN        (0x1UL  << 17)
+#define RCC_APBENR2_TIM15EN         (0x1UL  << 16)
+#define RCC_APBENR2_TIM16EN         (0x1UL  << 17)
 #define RCC_IOPENR_GPIOAEN_MASK     (0x1UL  << 0)
+#define RCC_CCIPR_USART2SEL_MASK    (0x3UL  << 2)
+#define RCC_CCIPR_USART2SEL(x)      ((x & 0x3UL) << 2)
+#define RCC_CCIPR_TIM15SEL_MASK     (0x1UL  << 24)
 
 #define USART2_BASE                 (0x40004400)
 #define USART2                      ((USART_Def*) USART2_BASE)
@@ -194,13 +319,57 @@ static inline void __disable_interrupts(void)       __attribute__((always_inline
 #define FLASH_ACR_LATENCY(x)        ((x & 0x7UL)  << 0)
 #define FLASH_ACR_PRFTEN_MASK       (0x1UL  << 8)
 
+#define TIM15_BASE                  (0x40014000)
+#define TIM16_BASE                  (0x40014400)
+#define TIM15                       ((TIM_Def*) TIM15_BASE)
+#define TIM16                       ((TIM_Def*) TIM16_BASE)
+#define TIM_CR1_CEN_MASK            (0x1  << 0)
+#define TIM_CCMR1_CC1S_MASK         (0x3UL  << 0)
+#define TIM_CCMR1_CC1S(x)           ((x & 0x3UL)  << 0)
+#define TIM_CCMR1_CC2S_MASK         (0x3UL  << 8)
+#define TIM_CCMR1_CC2S(x)           ((x & 0x3UL)  << 8)
+#define TIM_CCER_CC1NP_MASK         (0x1  << 3)
+#define TIM_CCER_CC1P_MASK          (0x1  << 1)
+#define TIM_CCER_CC2NP_MASK         (0x1  << 7)
+#define TIM_CCER_CC2P_MASK          (0x1  << 5)
+#define TIM_CCER_CC1E_MASK          (0x1  << 0)
+#define TIM_CCER_CC2E_MASK          (0x1  << 4)
+#define TIM_DIER_CC1IE_MASK         (0x1  << 1)
+#define TIM_DIER_CC2IE_MASK         (0x1  << 2)
+#define TIM_DIER_CC1DE_MASK         (0x1  << 9)
+#define TIM_SR_CC1IF_MASK           (0x1  << 1)
+#define TIM_SR_CC2IF_MASK           (0x1  << 2)
+#define TIM_TISEL_TI1SEL_MASK       (0XFUL << 0)
+#define TIM_TISEL_TI1SEL(x)         ((x & 0XFUL) << 0)
+#define TIM_TISEL_TI2SEL_MASK       (0XFUL << 8)
+#define TIM_TISEL_TI2SEL(x)         ((x & 0XFUL) << 8)
+
+#define DMAMUX_BASE                 (0x40020800)
+#define DMAMUX                      ((DMAMUX_Def*) DMAMUX_BASE)
+#define DMAMUX_CxCR_DMAREQ_ID(x)    ((x & 0x7FUL) << 0)
+
+#define DMA1_BASE                   (0x40020000)
+#define DMA1                        ((DMA1_Def*) DMA1_BASE)
+#define DMA1_ISR_TF_FLAG(x)         (0x1UL  << (2 * x - 1))
+#define DMA1_IFCR_CTCIF(x)          (0x1UL  << (2 * x - 1))
+#define DMA1_CCR_PL_MASK            (0x3UL  << 12)
+#define DMA1_CCR_PL(x)              ((x & 0x3UL) << 12)
+#define DMA1_CCR_MSIZE_MASK         (0x3UL  << 10)
+#define DMA1_CCR_MSIZE(x)           ((x & 0x3UL) << 10)
+#define DMA1_CCR_PSIZE_MASK         (0x3UL  << 8)
+#define DMA1_CCR_PSIZE(x)           ((x & 0x3UL) << 8)
+#define DMA1_CCR_MINC_MASK          (0x1UL  << 7)
+#define DMA1_CCR_CIRC_MASK          (0x1UL  << 5)
+#define DMA1_CCR_DIR_MASK           (0x1UL  << 4)
+#define DMA1_CCR_TCIE_MASK          (0x1UL  << 1)
+#define DMA1_CCR_EN_MASK            (0x1UL  << 0)
+
 /*================== Utils =================================================================*/
 #define ARRAY_SIZE(array)           (sizeof(array) / sizeof(array[0]))
-#define INTERRUPT_VECTOR            __attribute__((interrupt("IRQ")))
+#define INTERRUPT_VECTOR            void __attribute__((interrupt("IRQ")))
 
-inline void NVIC_EnableIRQ(uint8_t IRQn) {
+static inline void NVIC_EnableIRQ(uint8_t IRQn) {
     NVIC->ISER |= (1 << IRQn);
-
 }
 
 /*================== Function Definitions ==================================================*/

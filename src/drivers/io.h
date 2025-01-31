@@ -20,7 +20,9 @@ typedef enum {
 typedef enum {
     IO_USART2_TX = IO_A2,
     IO_USART2_RX = IO_A3,
-    IO_USER_LED = IO_A5 
+    IO_USER_LED = IO_A5,
+    IO_MCO = IO_A8,
+    IO_MCO2 = IO_A10
 } io_e;
 
 typedef enum {
@@ -75,12 +77,5 @@ typedef struct {
 } io_config;
 
 void io_init(void);
-void io_configure(io_e io, io_config config);
-void io_configure_mode(uint8_t port, uint8_t pin, io_mode_e mode);
-void io_configure_function(uint8_t port, uint8_t pin, io_func_e function);
-void io_configure_type(uint8_t port, uint8_t pin, io_type_e type);
-void io_configure_speed(uint8_t port, uint8_t pin, io_speed_e speed);
-void io_configure_pull(uint8_t port, uint8_t pin, io_pull_e pull);
-void io_configure_value(uint8_t port, uint8_t pin, io_val_e value);
 
 #endif // IO_H

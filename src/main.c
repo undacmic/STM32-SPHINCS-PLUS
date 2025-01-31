@@ -1,17 +1,28 @@
+#include "external/XKCP/SimpleFIPS202.h"
 #include "common/defines.h"
 #include "drivers/io.h"
-#include "drivers/uart.h"
-#include "external/printf/printf.h"
+#include "drivers/rng.h"
+
+#include <stdlib.h>
+
 
 int main () {
     io_init();
+    RNG_Module_Init();
 
-    __enable_interrupts();
+    int i;
+    uint8_t* seed = 0;
 
-    USART_Init();
+    for ( i = 0; i < 10; i++) {
+        seed = GenerateBytes(32);
+        free(seed);
+    }
+
+    unsigned char hash[32] = { 0 };
+    unsigned char input[5] = "ceva";
+    SHA3_256(hash, input, 4);
 
     while (1) {
-        printf("OK\n");
     }
 
     return 0;
