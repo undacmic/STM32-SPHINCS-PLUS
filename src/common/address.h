@@ -21,8 +21,8 @@
 #define OFFSET_TREE_ADDRESS     (1)
 #define OFFSET_LAYER_TYPE       (9)
 #define OFFSET_KEY_PAIR_ADDRESS (10)
-#define OFFSET_CHAIN_ADDRESS    (17)
-#define OFFSET_HASH_ADDRESS     (21)
+#define OFFSET_CHAIN_ADDRESS    (14)
+#define OFFSET_HASH_ADDRESS     (18)
 #else
 #define ADRS_SIZE               (32)
 #define OFFSET_LAYER_ADDRESS    (3)

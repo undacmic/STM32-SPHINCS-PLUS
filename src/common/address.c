@@ -18,8 +18,8 @@ void set_key_pair_addr(uint8_t* ADRS, uint32_t key_pair_address) {
 }
 
 void set_chain_addr(uint8_t* ADRS, uint32_t chain_address) {
-    ADRS[OFFSET_CHAIN_ADDRESS] = chain_address & 0xFF;
+    ui32_to_bytes(&ADRS[OFFSET_CHAIN_ADDRESS], chain_address);
 }
 void set_hash_addr(uint8_t* ADRS, uint32_t hash_address) {
-    ADRS[OFFSET_HASH_ADDRESS] = hash_address & 0xFF;
+    ui32_to_bytes(&ADRS[OFFSET_HASH_ADDRESS], hash_address);
 }

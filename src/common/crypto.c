@@ -1,24 +1,15 @@
 #include "common/crypto.h"
 #include "common/utils.h"
 #include "common/address.h"
-#include "drivers/rng.h"
+
+#ifdef TEST_SETUP
+#include "lib/XKCP/generic64/libXKCP.a.headers/SimpleFIPS202.h"
+#else
+#include "lib/XKCP/armv6-m/libXKCP.a.headers/SimpleFIPS202.h"
+#endif
 
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-
-#include "external/XKCP/SimpleFIPS202.h"
-
-#define SPX_N           (16)                // Security Parameter
-#define SPX_W           (16)                // Winternitz Parameter
-#define SPX_H           (66)                // Hypertree Height
-#define SPX_D           (22)                // Hypertree Layers
-#define SPX_H_PRIME     (SPX_H / SPX_D)     // Tree height
-#define hLen            (32)                // Hash Length
-
-#define WOTS_LEN1       (32)
-#define WOTS_LEN2       (3)
-#define WOTS_LEN        (WOTS_LEN1 + WOTS_LEN2)
 
 #define PRF(out, PK_seed, ADRS)     T_l(out, PK_seed, ADRS, 0, 0)
 #define F(out, PK_seed, ADRS, M)    T_l(out, PK_seed, ADRS, M, 1)
@@ -28,7 +19,9 @@
  * MGF1 as defined in RFC 2437
  */
 void mgf1 (uint8_t* out, uint8_t* PK_seed, uint8_t* ADRS, uint32_t l) {
-    uint8_t Z[SPX_N + ADRS_SIZE + 4] = { 0 };
+    uint8_t Z[SPX_N + ADRS_SIZE + 4];
+    memset(Z, 0, SPX_N + ADRS_SIZE + 4);
+
     uint8_t temp[hLen];
     uint32_t counter = 0;
     uint32_t no_iterations = (l + hLen - 1) / hLen;
@@ -84,15 +77,4 @@ void chain (uint8_t* out, uint8_t* X, uint32_t i, uint32_t s, uint8_t* PK_seed, 
     }
 }
 
-// uint8_t* ht_PKgen (uint8_t* SK_seed, uint8_t* PK_seed) {
-//     return 0;
-// }
-
-// uint8_t* spx_keygen (void) {
-//     uint8_t* key_pair = malloc(4 * N * sizeof(uint8_t));
-
-//     uint8_t* SK_seed = GenerateBytes(N);
-//     uint8_t* SK_prf = GenerateBytes(N);
-//     uint8_t* PK_seed = GenerateBytes(N);
-
-// }
+// 112015988200668bff8bde6ee73a3f4a
