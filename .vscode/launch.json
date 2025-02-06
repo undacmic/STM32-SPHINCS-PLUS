@@ -7,7 +7,7 @@
         {
             "name": "Cortex Debug",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/build/bin/program.elf",
+            "executable": "${workspaceFolder}/build/sphincs_plus_zero.elf",
             "request": "launch",
             "type": "cortex-debug",
             // Stop at the first CPU instruction
@@ -24,7 +24,7 @@
                 "target/stm32g0x.cfg"
             ],
             "preLaunchCommands": [
-                "monitor program ${workspaceFolder}/build/bin/program.elf verify",
+                "monitor program ${workspaceFolder}/build/sphincs_plus_zero.elf verify",
                 "monitor mdw 0x20000028",
                 "monitor reset halt",
                 "monitor mdw 0x20000028"
