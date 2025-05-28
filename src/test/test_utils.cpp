@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "common/crypto.h"
 #include "common/utils.h"
 
 TEST(UtilsTest, U32ToBytes) {
@@ -51,4 +52,24 @@ TEST(UtilsTest, U64ToBytes) {
         EXPECT_EQ(expected3[i], actual[i]);
     }
 
+}
+
+TEST(UtilsTest, BlockPad) {
+    uint8_t actual[64];
+
+    uint8_t PK_seed[SPX_N] = {
+        0x01, 0x02, 0x03, 0x04,
+        0x01, 0x02, 0x03, 0x04,
+        0x01, 0x02, 0x03, 0x04,
+        0x01, 0x02, 0x03, 0x04
+    };    
+
+    BlockPad(actual, PK_seed);
+
+    for (int i = 0; i < SPX_N; i++){
+        EXPECT_EQ(PK_seed[i], actual[i]);
+    }
+    for(int i = SPX_N; i < BLOCK_SIZE; i++) {
+        EXPECT_EQ(0, actual[i]);
+    }
 }

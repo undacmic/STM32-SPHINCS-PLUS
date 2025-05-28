@@ -73,8 +73,6 @@ include_directories(
     ../..
 )
 
-add_library(sphincs STATIC ${SPHINCS_SOURCES})
-
 add_compile_options(
     -fprofile-arcs
     -ftest-coverage
@@ -94,6 +92,8 @@ add_link_options(
     -DTEST_SETUP
     -DHASH_SHA3
 )
+
+add_library(sphincs STATIC ${SPHINCS_SOURCES})
 
 add_executable(
     sphincs_test
