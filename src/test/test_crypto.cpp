@@ -31,7 +31,11 @@ TEST(CryptoModuleTest, MaskGenerationFunction) {
         0xEF, 0x34, 0xA0, 0x2B
     };
 
-    mgf1(mask, PK_seed, ADRS, 16);
+    uint8_t M[SPX_N + ADRS_SIZE];
+    memcpy(M, PK_seed, SPX_N);
+    memcpy(M + SPX_N, ADRS, ADRS_SIZE);
+
+    mgf1(mask, M, SPX_N + ADRS_SIZE, 16);
     for (int i = 0; i < 16; i++) {
         EXPECT_EQ(expected[i], mask[i]);
     }
@@ -135,6 +139,39 @@ TEST(CryptoModuleTest, WotsPublicKeyGenerationFunctionTest) {
 
     for (int i = 0; i < SPX_N; i++) {
         EXPECT_EQ(expected[i], out[i]);
+    }
+}
+
+TEST(CryptoModuleTest, WotsSignatureGenerationVerificationTest) {
+    uint8_t ADRS[ADRS_SIZE];
+    memset(ADRS, 0, ADRS_SIZE);
+
+    uint8_t SK_seed[SPX_N];
+    memset(SK_seed, 0, SPX_N);
+    
+    uint8_t PK_seed[SPX_N] = {
+        0x01, 0x02, 0x03, 0x04,
+        0x01, 0x02, 0x03, 0x04,
+        0x01, 0x02, 0x03, 0x04,
+        0x01, 0x02, 0x03, 0x04
+    };
+
+    uint8_t M[WOTS_LEN];
+    memset(M, 0, WOTS_LEN);
+
+    uint8_t wotsPK[SPX_N];
+    wots_PKgen(wotsPK, SK_seed, PK_seed, ADRS);
+
+    uint8_t sig[SPX_N * WOTS_LEN];
+    memset(ADRS, 0, ADRS_SIZE);
+    wots_sign(sig, M, SK_seed, PK_seed, ADRS);
+
+    uint8_t wotsExtractedPK[SPX_N];
+    memset(ADRS, 0 ,ADRS_SIZE);
+    wots_pkFromSig(wotsExtractedPK, sig, M, PK_seed, ADRS);
+
+    for (int i = 0; i < SPX_N; i++) {
+        EXPECT_EQ(wotsPK[i], wotsExtractedPK[i]);
     }
 }
 
